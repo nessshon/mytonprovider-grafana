@@ -1,4 +1,5 @@
 services:
+
   grafana:
     image: grafana/grafana:latest
     container_name: mytonprovider-grafana
@@ -8,5 +9,18 @@ services:
     env_file:
       - .env
     volumes:
-      - ./provisioning:/etc/grafana/provisioning
-      - ./dashboards:/etc/grafana/dashboards
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/dashboards:/etc/grafana/dashboards
+
+  nginx:
+    image: jonasal/nginx-certbot:5.0.0
+    container_name: mytonprovider-nginx
+    restart: unless-stopped
+    env_file:
+      - ./.env
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/user_conf.d:/etc/nginx/user_conf.d
+      - ./certbot/letsencrypt:/etc/letsencrypt
