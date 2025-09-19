@@ -1,39 +1,31 @@
 # MyTONProvider Grafana Dashboards
 
-Provisioned Grafana dashboards for monitoring TON storage providers using PostgreSQL as a datasource.  
+Provisioned Grafana dashboards for monitoring TON storage providers using PostgreSQL as a datasource, served via Nginx with automatic SSL certificates.  
 
 ---
 
 ## Project structure
 
 ```
-
 .
-├─ dashboards/
-│  ├─ main-providers.json         # main dashboard: global overview (CPU, RAM, Swap, Disk, Net, Ping)
-│  └─ per-provider/               # dashboards focused on single metrics
-│     ├─ cpu.json                 # CPU load (1m / 5m / 15m averages per provider)
-│     ├─ disk.json                # Disk usage %, per-device load, IOPS
-│     └─ ...
-├─ provisioning/
-│  ├─ dashboards.yml              # defines how dashboards are provisioned
-│  └─ datasources/
-│     └─ postgres.yml             # PostgreSQL datasource definition
-├─ docker-compose.yml             # containerized Grafana service
+├─ nginx/
+│  └─ user_conf.d/                # custom Nginx configs
+├─ certbot/
+│  └─ letsencrypt/                # Certbot certificates storage
+├─ grafana/
+│  ├─ dashboards/                 # exported Grafana dashboards in JSON
+│  └─ provisioning/               # Grafana provisioning configs
+│     ├─ dashboards.yml           # defines how dashboards are provisioned
+│     └─ datasources/
+│        └─ postgres.yml          # PostgreSQL datasource definition
+├─ docker-compose.yml             # containerized Grafana + Nginx + Certbot
 └─ .env.example                   # environment variables template
+```
 
-````
-
-- **dashboards/** — exported Grafana dashboards in JSON format.  
-  - `main-providers.json` → single entry-point dashboard with overall provider metrics and dropdown provider selector.  
-  - `per-provider/` → specialized dashboards for deeper analysis of a single metric across providers.  
-
-- **provisioning/** — auto-provisioning configs for Grafana.  
-  - `dashboards.yml` → ensures dashboards are loaded automatically at startup.  
-  - `datasources/postgres.yml` → configures PostgreSQL as the datasource.  
-
-- **docker-compose.yml** — runs Grafana with mounted configs and dashboards.  
-- **.env.example** — template with credentials and database connection parameters.
+- **nginx/** — reverse proxy configuration for Grafana.  
+- **certbot/** — directory for automatically issued SSL certificates.  
+- **grafana/dashboards/** — exported dashboards in JSON format.  
+- **grafana/provisioning/** — auto-provisioning configs for Grafana.  
 
 ---
 
@@ -41,31 +33,43 @@ Provisioned Grafana dashboards for monitoring TON storage providers using Postgr
 
 Copy `.env.example` → `.env` and configure:
 
-```ini
+```.env
 # Grafana admin
 GF_SECURITY_ADMIN_USER=admin
 GF_SECURITY_ADMIN_PASSWORD=changeme
 GF_USERS_ALLOW_SIGN_UP=false
+
+# Grafana server settings
+GF_SERVER_ROOT_URL=https://grafana.mytonprovider.org
+GF_SERVER_DOMAIN=grafana.mytonprovider.org
+GF_SERVER_ENFORCE_DOMAIN=true
+GF_SERVER_SERVE_FROM_SUB_PATH=false
 
 # PostgreSQL connection
 PG_HOST=localhost
 PG_PORT=5432
 PG_USER=pguser
 PG_PASSWORD=secret
-PG_DB=db
-````
+PG_DB=mydb
+
+# Certbot email for SSL renewal
+CERTBOT_EMAIL=admin@example.com
+```
 
 ---
 
-## Run Grafana
+## Run services
 
-Start Grafana with Docker Compose:
+Start Grafana, Nginx, and Certbot:
 
 ```bash
 docker compose up -d
-````
+```
 
-Once the container is running, Grafana will be accessible on port **3000**.
+After startup:
+
+* Grafana is available at **[https://grafana.mytonprovider.org](https://grafana.mytonprovider.org)**
+* SSL certificates are automatically issued and renewed by Certbot.
 
 Login with the credentials specified in your `.env` file.
 
@@ -74,11 +78,10 @@ Login with the credentials specified in your `.env` file.
 ## Permissions on folders
 
 Grafana inside the container runs as UID `472`.
-
-Make sure the mounted `dashboards/` and `provisioning/` folders are accessible:
+Ensure the mounted folders are accessible:
 
 ```bash
-chown -R 472:472 ./dashboards ./provisioning
+chown -R 472:472 ./grafana/dashboards ./grafana/provisioning
 ```
 
 ---
