@@ -1,0 +1,12 @@
+services:
+  grafana:
+    image: grafana/grafana:latest
+    container_name: mytonprovider-grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    volumes:
+      - ./provisioning:/etc/grafana/provisioning
+      - ./dashboards:/etc/grafana/dashboards

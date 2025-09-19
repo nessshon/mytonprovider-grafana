@@ -1,0 +1,22 @@
+apiVersion: 1
+
+providers:
+  - name: 'Main — Providers Overview'
+    orgId: 1
+    folder: ''
+    type: file
+    options:
+      path: /etc/grafana/dashboards/main-providers.json
+    updateIntervalSeconds: 30
+    allowUiUpdates: true
+    editable: true
+
+  - name: 'Per-Provider Dashboards'
+    orgId: 1
+    folder: 'Per Provider'
+    type: file
+    options:
+      path: /etc/grafana/dashboards/per-provider
+    updateIntervalSeconds: 30
+    allowUiUpdates: true
+    editable: true

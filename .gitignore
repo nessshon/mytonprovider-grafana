@@ -1,0 +1,30 @@
+# Ignore environment files
+.env
+
+# Grafana data
+grafana-data/
+
+# Logs
+*.log
+logs/
+*.tmp
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Python
+__pycache__/
+venv/
+.venv/
+.idea/
+*.pyc
+*.pyo
+
+# Node modules
+node_modules/
+
+# Backup / temporary files
+*.bak
+*.swp
+*.swo
