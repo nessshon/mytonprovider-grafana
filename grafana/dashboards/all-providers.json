@@ -906,7 +906,8 @@
             "lineWidth": 1,
             "pointSize": 5,
             "scaleDistribution": {
-              "type": "linear"
+              "log": 2,
+              "type": "log"
             },
             "showPoints": "never",
             "spanNulls": true,
@@ -967,7 +968,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "WITH base AS (\n\n  SELECT archived_at AS time, public_key, (net_recv)[1] AS value\n  FROM providers.telemetry_history\n  WHERE $__timeFilter(archived_at)\n  UNION ALL\n  SELECT updated_at AS time, public_key, (net_recv)[1] AS value\n  FROM providers.telemetry\n  WHERE $__timeFilter(updated_at)\n\n)\nSELECT time,\n       public_key AS metric,\n       value\nFROM base\nORDER BY time ASC, metric ASC;",
+          "rawSql": "WITH base AS (\n  SELECT archived_at AS time, public_key, (net_recv)[1] * 1000 AS value  -- KB/s → B/s\n  FROM providers.telemetry_history\n  WHERE $__timeFilter(archived_at)\n  UNION ALL\n  SELECT updated_at AS time, public_key, (net_recv)[1] * 1000 AS value\n  FROM providers.telemetry\n  WHERE $__timeFilter(updated_at)\n)\nSELECT time,\n       public_key AS metric,\n       value\nFROM base\nORDER BY time ASC, metric ASC;\n",
           "refId": "A",
           "sql": {
             "columns": [
@@ -1023,7 +1024,8 @@
             "lineWidth": 1,
             "pointSize": 5,
             "scaleDistribution": {
-              "type": "linear"
+              "log": 2,
+              "type": "log"
             },
             "showPoints": "never",
             "spanNulls": true,
@@ -1084,7 +1086,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "WITH base AS (\n\n  SELECT archived_at AS time, public_key, (net_sent)[1] AS value\n  FROM providers.telemetry_history\n  WHERE $__timeFilter(archived_at)\n  UNION ALL\n  SELECT updated_at AS time, public_key, (net_sent)[1] AS value\n  FROM providers.telemetry\n  WHERE $__timeFilter(updated_at)\n\n)\nSELECT time,\n       public_key AS metric,\n       value\nFROM base\nORDER BY time ASC, metric ASC;",
+          "rawSql": "WITH base AS (\n  SELECT archived_at AS time, public_key, (net_sent)[1] * 1000 AS value  -- KB/s → B/s\n  FROM providers.telemetry_history\n  WHERE $__timeFilter(archived_at)\n  UNION ALL\n  SELECT updated_at AS time, public_key, (net_sent)[1] * 1000 AS value\n  FROM providers.telemetry\n  WHERE $__timeFilter(updated_at)\n)\nSELECT time,\n       public_key AS metric,\n       value\nFROM base\nORDER BY time ASC, metric ASC;\n",
           "refId": "A",
           "sql": {
             "columns": [

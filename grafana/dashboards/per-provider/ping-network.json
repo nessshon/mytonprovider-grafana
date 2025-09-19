@@ -123,7 +123,8 @@
                 "value": 80
               }
             ]
-          }
+          },
+          "unit": "ms"
         },
         "overrides": []
       },
@@ -195,7 +196,8 @@
             "lineWidth": 1,
             "pointSize": 5,
             "scaleDistribution": {
-              "type": "linear"
+              "log": 2,
+              "type": "log"
             },
             "showPoints": "auto",
             "spanNulls": false,
@@ -220,9 +222,35 @@
                 "value": 80
               }
             ]
-          }
+          },
+          "unit": "Bps"
         },
-        "overrides": []
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "recv"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 9,
@@ -251,9 +279,28 @@
             "type": "postgres",
             "uid": "postgres_ds"
           },
+          "editorMode": "code",
           "format": "table",
-          "rawSql": "WITH hist AS (\n  SELECT archived_at AS time, (net_recv)[1] AS recv, (net_sent)[1] AS sent\n  FROM providers.telemetry_history\n  WHERE public_key = ${pubkeys:singlequote} AND $__timeFilter(archived_at)\n),\ncurr AS (\n  SELECT updated_at AS time, (net_recv)[1] AS recv, (net_sent)[1] AS sent\n  FROM providers.telemetry\n  WHERE public_key = ${pubkeys:singlequote} AND $__timeFilter(updated_at)\n)\nSELECT time, recv, sent FROM hist\nUNION ALL\nSELECT time, recv, sent FROM curr\nORDER BY time;",
-          "refId": "A"
+          "rawQuery": true,
+          "rawSql": "WITH hist AS (\n  SELECT archived_at AS time,\n         (net_recv)[1] * 1000 AS recv,\n         (net_sent)[1] * 1000 AS sent\n  FROM providers.telemetry_history\n  WHERE public_key = ${pubkeys:singlequote} AND $__timeFilter(archived_at)\n),\ncurr AS (\n  SELECT updated_at AS time,\n         (net_recv)[1] * 1000 AS recv,\n         (net_sent)[1] * 1000 AS sent\n  FROM providers.telemetry\n  WHERE public_key = ${pubkeys:singlequote} AND $__timeFilter(updated_at)\n)\nSELECT time, recv, sent FROM hist\nUNION ALL\nSELECT time, recv, sent FROM curr\nORDER BY time;\n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
         }
       ],
       "title": "Network throughput",
@@ -321,6 +368,6 @@
   "timezone": "",
   "title": "Ping & Network",
   "uid": "ping-network-per-provider",
-  "version": 2,
+  "version": 1,
   "weekStart": ""
 }
