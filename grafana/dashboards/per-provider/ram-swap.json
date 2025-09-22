@@ -355,6 +355,6 @@
   "timezone": "",
   "title": "RAM & Swap Usage",
   "uid": "ram-swap-per-provider",
-  "version": 2,
+  "version": 1,
   "weekStart": ""
 }

@@ -423,6 +423,6 @@
   "timezone": "",
   "title": "Disk Usage & Load & IOPS",
   "uid": "disk-per-provider",
-  "version": 3,
+  "version": 1,
   "weekStart": ""
 }
