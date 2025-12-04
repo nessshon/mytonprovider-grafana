@@ -1,5 +1,8 @@
 # Ignore environment files
 .env
+mtpo_bearer_token
+mtso_bearer_token
+gateway_bearer_token
 
 # Grafana data
 grafana-data/

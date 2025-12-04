@@ -9,7 +9,8 @@ Provisioned Grafana dashboards for monitoring TON storage providers using Postgr
 ```
 .
 ├─ nginx/
-│  └─ user_conf.d/                # custom Nginx configs
+│  ├─ user_conf.d/                # custom Nginx configs
+|  └─ loki.htpasswd               # loki auth
 ├─ certbot/
 │  └─ letsencrypt/                # Certbot certificates storage
 ├─ grafana/
@@ -18,6 +19,11 @@ Provisioned Grafana dashboards for monitoring TON storage providers using Postgr
 │     ├─ dashboards.yml           # defines how dashboards are provisioned
 │     └─ datasources/
 │        └─ postgres.yml          # PostgreSQL datasource definition
+├─ prometheus
+|  └─ prometheus.yml              # Prometheus definition
+├─ loki
+│  ├─ build_logs_sender.sh        # script to run on machine with logs
+|  └─ loki-config.yml             # Loki definition
 ├─ docker-compose.yml             # containerized Grafana + Nginx + Certbot
 └─ .env.example                   # environment variables template
 ```
@@ -26,6 +32,8 @@ Provisioned Grafana dashboards for monitoring TON storage providers using Postgr
 - **certbot/** — directory for automatically issued SSL certificates.  
 - **grafana/dashboards/** — exported dashboards in JSON format.  
 - **grafana/provisioning/** — auto-provisioning configs for Grafana.  
+- **loki/** — log aggregation system configuration and storage.  
+- **prometheus/** — metrics collection, storage, and bearer token files.
 
 ---
 
@@ -55,6 +63,26 @@ PG_DB=mydb
 # Certbot email for SSL renewal
 CERTBOT_EMAIL=admin@example.com
 ```
+
+---
+
+## Prometheus
+
+Prometheus metrics require a `credentials_file` for authentication.  
+Add 3 files to the `./prometheus/` folder, each containing just a bearer token:
+
+```
+mtpo_bearer_token
+mtso_bearer_token
+gateway_bearer_token
+```
+
+---
+
+## Loki
+
+Loki provides a log aggregation solution with an init script for running on remote servers.  
+If logs are required, also check how authentication is handled in the `nginx/loki.htpasswd` file.
 
 ---
 
