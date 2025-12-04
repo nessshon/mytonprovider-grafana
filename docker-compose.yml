@@ -11,6 +11,7 @@ services:
     volumes:
       - ./grafana/provisioning:/etc/grafana/provisioning
       - ./grafana/dashboards:/etc/grafana/dashboards
+      - grafana_data:/var/lib/grafana
 
   nginx:
     image: jonasal/nginx-certbot:5.0.0
@@ -23,4 +24,40 @@ services:
       - "443:443"
     volumes:
       - ./nginx/user_conf.d:/etc/nginx/user_conf.d
+      - ./nginx/loki.htpasswd:/etc/nginx/loki.htpasswd:ro
       - ./certbot/letsencrypt:/etc/letsencrypt
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    restart: unless-stopped
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus/mtpo_bearer_token:/etc/prometheus/mtpo_bearer_token:ro
+      - ./prometheus/mtso_bearer_token:/etc/prometheus/mtso_bearer_token:ro
+      - ./prometheus/gateway_bearer_token:/etc/prometheus/gateway_bearer_token:ro
+      - prometheus_data:/prometheus 
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    ports:
+      - "9090:9090"
+
+  loki:
+    image: grafana/loki:3.0.0
+    container_name: loki
+    restart: unless-stopped
+    volumes:
+      - ./loki/loki-config.yml:/etc/loki/local-config.yml:ro
+      - loki_data:/loki
+    command: -config.file=/etc/loki/local-config.yml
+    ports:
+      - "3100:3100"
+
+volumes:
+  prometheus_data:
+  loki_data:
+  grafana_data:
