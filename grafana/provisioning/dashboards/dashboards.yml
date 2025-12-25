@@ -31,29 +31,39 @@ providers:
     allowUiUpdates: true
     editable: true
 
-  - name: 'Main — Providers Overview'
+  - name: 'Providers'
     orgId: 1
     folder: ''
     type: file
     options:
-      path: /etc/grafana/dashboards/main-providers.json
+      path: /etc/grafana/dashboards/providers.json
     updateIntervalSeconds: 30
     allowUiUpdates: true
     editable: true
 
-  - name: 'ALL — Providers Overview'
+  - name: 'Providers - Details'
     orgId: 1
     folder: ''
     type: file
     options:
-      path: /etc/grafana/dashboards/all-providers.json
+      path: /etc/grafana/dashboards/providers-details.json
+    updateIntervalSeconds: 30
+    allowUiUpdates: true
+    editable: true
+
+  - name: 'Providers - Versions'
+    orgId: 1
+    folder: ''
+    type: file
+    options:
+      path: /etc/grafana/dashboards/providers-versions.json
     updateIntervalSeconds: 30
     allowUiUpdates: true
     editable: true
 
   - name: 'Per-Provider Dashboards'
     orgId: 1
-    folder: 'Per Provider'
+    folder: 'Per Provider Dashboards'
     type: file
     options:
       path: /etc/grafana/dashboards/per-provider

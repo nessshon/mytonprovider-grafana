@@ -1113,9 +1113,7 @@
   "refresh": "30s",
   "schemaVersion": 41,
   "tags": [
-    "main",
-    "providers",
-    "all"
+    "providers"
   ],
   "templating": {
     "list": []
@@ -1136,8 +1134,8 @@
     ]
   },
   "timezone": "",
-  "title": "All Providers Dashboard",
-  "uid": "mytonprovider_all",
+  "title": "Providers - Details",
+  "uid": "providers_details",
   "version": 1,
   "weekStart": ""
 }

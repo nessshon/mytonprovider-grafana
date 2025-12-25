@@ -946,7 +946,6 @@
   "refresh": "30s",
   "schemaVersion": 41,
   "tags": [
-    "main",
     "providers"
   ],
   "templating": {
@@ -984,8 +983,8 @@
     ]
   },
   "timezone": "",
-  "title": "Providers Dashboard",
-  "uid": "mytonprovider",
+  "title": "Providers",
+  "uid": "providers",
   "version": 1,
   "weekStart": ""
 }
